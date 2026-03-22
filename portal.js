@@ -1083,7 +1083,7 @@ function hrRenderStaff(){
   }).join('');
 }
 function hrTab(tab){sessionStorage.setItem('hr_tab',tab);
-  ['req','staff','analytics','export'].forEach(t=>{
+  ['req','staff','attendance','analytics','export'].forEach(t=>{
     document.getElementById('hr-tab-'+t).style.display=tab===t?'block':'none';
     const btn=document.getElementById('nt-'+t);if(btn)btn.classList.toggle('on',tab===t);
   });
@@ -1387,3 +1387,141 @@ function syncRefresh(){
   if(hrUser&&hrToken){hrLoadData();}
 }
 
+// ══════════════════ ATTENDANCE ══════════════════════════════════
+const WORK_START_MINS  = 8*60+30;  // 08:30
+const EARLY_THRESH_MINS= 8*60+20;  // 08:20 — 10 min early threshold
+const WORK_END_MINS    = 17*60+30; // 17:30
+
+function _attnToMins(t){
+  if(!t)return null;
+  const p=String(t).trim().split(':');
+  if(p.length<2)return null;
+  const h=parseInt(p[0]),m=parseInt(p[1]);
+  return(isNaN(h)||isNaN(m))?null:h*60+m;
+}
+function attnArrivalStatus(checkIn){
+  const m=_attnToMins(checkIn);
+  if(m===null)return'Absent';
+  if(m<EARLY_THRESH_MINS)return'Early';
+  if(m<=WORK_START_MINS)return'On Time';
+  return'Late';
+}
+function attnDepartureStatus(checkOut){
+  const m=_attnToMins(checkOut);
+  if(m===null)return'No Record';
+  return m<WORK_END_MINS?'Leave Early':'Normal';
+}
+
+// ── Template download ────────────────────────────────────────────
+function attnDownloadTemplate(){
+  const wb=XLSX.utils.book_new();
+  const headers=['Employee ID','Full Name','Date','Check In','Check Out','Note'];
+  const instructions=['[Required]','[Optional — for reference]','[YYYY-MM-DD]','[HH:MM  24-hr format]','[HH:MM  24-hr format]','[Optional remark]'];
+  const sample1=['00024','Sok Dara','2026-03-22','08:15','17:35',''];
+  const sample2=['00031','Chan Sreymom','2026-03-22','08:32','16:55','Left early — doctor'];
+  const ws=XLSX.utils.aoa_to_sheet([headers,instructions,sample1,sample2]);
+  ws['!cols']=[{wch:14},{wch:22},{wch:14},{wch:14},{wch:14},{wch:28}];
+  XLSX.utils.book_append_sheet(wb,ws,'Attendance');
+  XLSX.writeFile(wb,'Attendance_Template.xlsx',{bookType:'xlsx',compression:true});
+  toast('Template downloaded','ok2');
+}
+
+// ── Upload & parse ───────────────────────────────────────────────
+let _attnRecords=[];
+function attnHandleUpload(input){
+  const file=input.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      const wb=XLSX.read(e.target.result,{type:'array'});
+      const ws=wb.Sheets[wb.SheetNames[0]];
+      const rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
+      if(rows.length<2){toast('File is empty or invalid','bad');return;}
+      const hdr=rows[0].map(h=>String(h).trim().toLowerCase());
+      const iId  =hdr.findIndex(h=>h.includes('employee')||h==='id');
+      const iName=hdr.findIndex(h=>h.includes('name'));
+      const iDate=hdr.findIndex(h=>h.includes('date'));
+      const iIn  =hdr.findIndex(h=>h.includes('check in'));
+      const iOut =hdr.findIndex(h=>h.includes('check out'));
+      const iNote=hdr.findIndex(h=>h.includes('note'));
+      if(iId<0||iDate<0){toast('Invalid file — missing Employee ID or Date column','bad');return;}
+      const records=[];
+      for(let i=1;i<rows.length;i++){
+        const r=rows[i];
+        const empId=String(r[iId]||'').trim();
+        const date =String(r[iDate]||'').trim();
+        if(!empId||empId.startsWith('[')||!date||date.startsWith('['))continue;
+        const checkIn =String(iIn >=0?r[iIn] ||'':'').trim();
+        const checkOut=String(iOut>=0?r[iOut]||'':'').trim();
+        records.push({
+          empId,
+          name:String(iName>=0?r[iName]||'':'').trim(),
+          date,
+          checkIn,
+          checkOut,
+          arrivalStatus  :attnArrivalStatus(checkIn),
+          departureStatus:attnDepartureStatus(checkOut),
+          note:String(iNote>=0?r[iNote]||'':'').trim()
+        });
+      }
+      if(!records.length){toast('No valid data rows found','bad');return;}
+      _attnRecords=records;
+      attnRenderTable();
+      document.getElementById('attn-preview-section').style.display='block';
+      toast(records.length+' records loaded — review then click Import','ok2');
+    }catch(ex){toast('Failed to read file: '+ex.message,'bad');}
+  };
+  reader.readAsArrayBuffer(file);
+  input.value='';
+}
+
+// ── Render preview table ─────────────────────────────────────────
+const _ATTN_ARR_BADGE={
+  'Early'      :'<span class="attn-badge attn-early">Early</span>',
+  'On Time'    :'<span class="attn-badge attn-ontime">On Time</span>',
+  'Late'       :'<span class="attn-badge attn-late">Late</span>',
+  'Absent'     :'<span class="attn-badge attn-absent">Absent</span>'
+};
+const _ATTN_DEP_BADGE={
+  'Normal'     :'<span class="attn-badge attn-normal">Normal</span>',
+  'Leave Early':'<span class="attn-badge attn-leavearly">Leave Early</span>',
+  'No Record'  :'<span class="attn-badge attn-norecord">No Record</span>'
+};
+function attnRenderTable(){
+  const tbody =document.getElementById('attn-tbody');
+  const nodata=document.getElementById('attn-nodata');
+  if(!_attnRecords.length){tbody.innerHTML='';nodata.style.display='block';return;}
+  nodata.style.display='none';
+  tbody.innerHTML=_attnRecords.map(r=>`<tr>
+    <td style="white-space:nowrap">${r.date}</td>
+    <td><div style="font-weight:500">${r.name||'—'}</div><div style="font-size:11px;color:var(--txt3)">${r.empId}</div></td>
+    <td style="text-align:center">${r.checkIn||'—'}</td>
+    <td>${_ATTN_ARR_BADGE[r.arrivalStatus]||r.arrivalStatus}</td>
+    <td style="text-align:center">${r.checkOut||'—'}</td>
+    <td>${_ATTN_DEP_BADGE[r.departureStatus]||r.departureStatus}</td>
+    <td style="font-size:12px;color:var(--txt3)">${r.note||'—'}</td>
+  </tr>`).join('');
+}
+
+// ── Import to Google Sheets ──────────────────────────────────────
+async function attnImport(){
+  if(!_attnRecords.length){toast('No records to import','bad');return;}
+  const btn=document.getElementById('attn-import-btn');
+  btn.disabled=true;btn.innerHTML='Importing…';
+  try{
+    const res=await apiPost('importAttendance',{records:_attnRecords,token:hrToken||''});
+    if(res.result==='success'){
+      toast(res.imported+' records saved to Google Sheets','ok2');
+      _attnRecords=[];
+      attnRenderTable();
+      document.getElementById('attn-preview-section').style.display='none';
+    }else{
+      toast('Import failed: '+(res.error||'Unknown error'),'bad');
+    }
+  }catch(e){toast('Connection error','bad');}
+  finally{
+    btn.disabled=false;
+    btn.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Import to Google Sheets';
+  }
+}
