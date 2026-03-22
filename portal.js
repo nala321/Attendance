@@ -1447,8 +1447,12 @@ function attnHandleUpload(input){
       for(let i=1;i<rows.length;i++){
         const r=rows[i];
         const empId=String(r[iId]||'').trim();
-        const date =String(r[iDate]||'').trim();
+        let date=String(r[iDate]||'').trim();
         if(!empId||empId.startsWith('[')||!date||date.startsWith('['))continue;
+        // Normalise: if YYYY-MM-DD convert to DD-MM-YYYY for display
+        if(/^\d{4}-\d{2}-\d{2}$/.test(date)){const p=date.split('-');date=p[2]+'-'+p[1]+'-'+p[0];}
+        // Also handle Excel serial date numbers
+        if(/^\d{5}$/.test(date)){const d=new Date(Math.round((Number(date)-25569)*86400*1000));date=String(d.getDate()).padStart(2,'0')+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+d.getFullYear();}
         const checkIn =String(iIn >=0?r[iIn] ||'':'').trim();
         const checkOut=String(iOut>=0?r[iOut]||'':'').trim();
         records.push({
