@@ -426,15 +426,17 @@ function cancelConfirmModal(){
   if(rm)rm.style.display='flex';
   setRStep(3);
 }
-async function doConfirm(){
+function doConfirm(){
   closeModal();
   if(_pendingPayload){
     const{payload,from,to,days}=_pendingPayload;
-    let reqId='';
+    _lastSubmit={...payload,from,to,days,requestId:''};
     if(!isMock()){
-      try{const res=await apiPost('submitRequest',payload);if(res&&res.requestId)reqId=res.requestId;}catch(e){}
+      // Fire-and-forget — update requestId in background when server responds
+      apiPost('submitRequest',payload).then(function(res){
+        if(res&&res.requestId&&_lastSubmit){_lastSubmit.requestId=res.requestId;}
+      }).catch(function(){});
     }
-    _lastSubmit={...payload,from,to,days,requestId:reqId};
   }
   _isSubmitting=false;
   _pendingPayload=null;
