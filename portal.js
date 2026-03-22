@@ -1184,7 +1184,7 @@ function expDownload(){
   ]);
   const ws2=XLSX.utils.aoa_to_sheet([noticeHeaders,...noticeRows]);
   XLSX.utils.book_append_sheet(wb,ws2,'Late & Early Notices');
-  XLSX.writeFile(wb,`LocktonIBS_Leave_${yr}_${moName}_${st}.xlsx`);
+  XLSX.writeFile(wb,`LocktonIBS_Leave_${yr}_${moName}_${st}.xlsx`,{bookType:'xlsx',compression:true});
   toast('XLSX downloaded','ok2');
 }
 
