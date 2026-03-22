@@ -1416,10 +1416,7 @@ function attnDepartureStatus(checkOut){
 function attnDownloadTemplate(){
   const wb=XLSX.utils.book_new();
   const headers=['Employee ID','Full Name','Date','Check In','Check Out','Note'];
-  const instructions=['[Required]','[Optional — for reference]','[YYYY-MM-DD]','[HH:MM  24-hr format]','[HH:MM  24-hr format]','[Optional remark]'];
-  const sample1=['00024','Sok Dara','2026-03-22','08:15','17:35',''];
-  const sample2=['00031','Chan Sreymom','2026-03-22','08:32','16:55','Left early — doctor'];
-  const ws=XLSX.utils.aoa_to_sheet([headers,instructions,sample1,sample2]);
+  const ws=XLSX.utils.aoa_to_sheet([headers]);
   ws['!cols']=[{wch:14},{wch:22},{wch:14},{wch:14},{wch:14},{wch:28}];
   XLSX.utils.book_append_sheet(wb,ws,'Attendance');
   XLSX.writeFile(wb,'Attendance_Template.xlsx',{bookType:'xlsx',compression:true});
