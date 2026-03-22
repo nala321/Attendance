@@ -13,6 +13,20 @@ function toggleTheme() {
 }
 applyTheme();
 
+// ── DEEP LINK ─────────────────────────────────────────────────────
+// When HR taps the Telegram link (?req=REQ-XXXXXXXX), auto-open HR view
+let _deepReq = new URLSearchParams(window.location.search).get('req') || '';
+if(_deepReq){
+  document.addEventListener('DOMContentLoaded', function(){
+    // Navigate to HR section — login gate will show by default
+    document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
+    const hv=document.getElementById('v-hr');if(hv)hv.classList.add('active');
+    // Show a subtle hint so HR knows why they're here
+    const lerr=document.getElementById('hr-lerr');
+    if(lerr)lerr.textContent='Log in to review request '+_deepReq;
+  });
+}
+
 // ── SESSION RESTORE ──────────────────────────────────────────────
 (function restoreSession(){
   try{
@@ -568,7 +582,7 @@ function _gmoStart(gateId,msgs,durs){
   const ov=document.createElement('div');
   ov.className='gmo-overlay';ov.id='gmo-'+gateId;
   ov.innerHTML=`<div class="gmo-inner"><div class="gmo-ring"></div><div class="gmo-msg-row"><span class="gmo-msg-text" id="gmo-t-${gateId}"></span><span class="gmo-dots" id="gmo-d-${gateId}"></span></div><div class="gmo-prog-track"><div class="gmo-prog-fill" id="gmo-b-${gateId}"></div></div></div>`;
-  gate.appendChild(ov);
+  document.body.appendChild(ov);
   const tEl=document.getElementById('gmo-t-'+gateId);
   const dEl=document.getElementById('gmo-d-'+gateId);
   const bEl=document.getElementById('gmo-b-'+gateId);
@@ -777,6 +791,18 @@ function hrRenderReqs(){
           :delBtn||'<span style="font-size:11px;color:var(--txt3)">—</span>';
     return`<tr id="hr-row-${r.id}" style="transition:background .2s,opacity .2s${busy?';opacity:.55':''}"><td style="font-size:10px;color:var(--txt3);font-family:monospace">${r.id||'—'}</td><td><div style="font-weight:500">${r.empName||r.empId}</div><div style="font-size:11px;color:var(--txt3)">${r.empId}</div></td><td>${r.type}</td><td>${fmtDate(r.from)}</td><td style="text-align:center;font-weight:600">${r.days}</td><td><span class="badge b-${(r.status||'').toLowerCase()}">${r.status}</span></td><td><div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap">${actionCell}</div></td></tr>`;
   }).join('');
+  // ── Deep link: scroll to and highlight the linked request ────────
+  if(_deepReq){
+    const target=document.getElementById('hr-row-'+_deepReq);
+    if(target){
+      target.style.background='rgba(192,39,45,.10)';
+      target.style.outline='2px solid rgba(192,39,45,.4)';
+      target.style.borderRadius='6px';
+      setTimeout(()=>target.scrollIntoView({behavior:'smooth',block:'center'}),200);
+      setTimeout(()=>{target.style.background='';target.style.outline='';},4000);
+      _deepReq=''; // clear after use
+    }
+  }
 }
 async function hrUpdateStatus(reqId,ns){
   const reauth=await requireReauth('Enter your password to '+(ns==='Approved'?'approve':'reject')+' this request.');
