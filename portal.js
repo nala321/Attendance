@@ -64,8 +64,8 @@ function goTo(v) {
 // ── LANG ────────────────────────────────────────
 let LANG=localStorage.getItem('lang')||'en';
 const T={
-  en:{hEy:'Late / Leave Early / Annual Leave Request',hSub:'Insurance Brokers (Cambodia) Co., Ltd.',hC1t:'Request Leave',hC1d:'Submit a new annual or special leave request',hC2t:'My Leave Status',hC2d:'Check remaining days, history and print past requests',hC3t:'HR Dashboard',hC3d:'Approve, manage requests and staff records',back:'Back',rTitle:'Request Leave',stTitle:'My Leave Status',hrTitle:'HR Dashboard',rgTitle:'Enter Your Employee ID',rgSub:'Your identity will be verified before proceeding',rgBtn:'Verify & Continue',stgTitle:'Enter Your Employee ID',stgSub:'View your leave balance and history',stgBtn:'View My Leave',rsl1:'Verify ID',rsl2:'Fill Form',rsl3:'Review',rsl4:'Confirm',rsh1:'Staff Information',rsh2:'Leave Details',rsh3:'Submission Info',rlEid:'Employee ID',rlName:'Full Name',rlGen:'Gender',rlPos:'Position',rlType:'Leave Type',rlFrom:'From Date',rlTo:'To Date',rlRsn:'Reason',rlSdate:'Submission Date',rlSloc:'Location',lt1:'Annual Leave',lt2:'Sick Leave',lt3:'Emergency Leave',lt4:'Maternity / Paternity',lt5:'Unpaid Leave',lt6:'Other',dinfo:'Working days requested',dsub:'Excluding weekends',balUsed:'Used this year',rpBtn:'Preview & Continue →',rprTitle:'Review Your Request',pnHd:'',pnBd:'Your request has been sent to the HR team.<br><br><strong>Please print the form, sign it yourself, and bring it to management for approval.</strong><br><br>HR will notify you when your request is approved.',editBtn:'Edit',conTxt:'Confirm & Print',stTotLbl:'Total Days',stUsedLbl:'Used',stRemLbl:'Remaining',stBalTitle:'Annual Leave Balance',stHistTitle:'Leave History',stTh1:'ID',stTh2:'Type',stTh3:'From',stTh4:'To',stTh5:'Days',stTh6:'Status',stTh7:'Print',stNoData:'No leave history found.',hrLt:'HR Access',hrLs:'Authorised personnel only',hrLu:'Username',hrLp:'Password',hrLbtn:'Login',hrLerr:'Invalid credentials.',hrGreet:'Welcome back, ',hrGsub:'Lockton IBS HR Portal',hrLo:'Logout',hrNt1:'Requests',hrNt2:'Staff Records',hrStLbl:'Total',hrSpLbl:'Pending',hrSaLbl:'Approved',hrSrLbl:'Rejected',hftAll:'All',hftPend:'Pending',hftAppr:'Approved',hftRej:'Rejected',hrTh1:'Req ID',hrTh2:'Staff',hrTh3:'Type',hrTh4:'From',hrTh5:'Days',hrTh6:'Status',hrTh7:'Action',hrApprove:'Approve',hrReject:'Reject',hrSh:'Staff Registry',hrSth1:'ID',hrSth2:'Name',hrSth3:'Position',hrSth4:'Total',hrSth5:'Used',hrSth6:'Remaining',approveQ:'Approve this request?',rejectQ:'Reject this request?',notFound:'Employee ID not found.',daysRem:'days remaining',errFields:'Please fill in all required fields.',errDate:'End date must be after start date.',errType:'Please select a leave type.',sending:'Submitting...',success:'Submitted! Preparing print...',errSubmit:'Submission failed. Try again.',male:'Male',female:'Female',ptEid:'Employee ID',ptName:'Full Name',ptGen:'Gender',ptPos:'Position',ptType:'Leave Type',ptFrom:'From',ptTo:'To',ptDays:'Working Days',ptRsn:'Reason',ptSub:'Submitted'},
-  kh:{hEy:'សំណើសុំឈប់សម្រាកប្រចាំឆ្នាំ',hSub:'សំណើសុំឈប់សម្រាកប្រចាំឆ្នាំ',hC1t:'ស្នើសុំច្បាប់',hC1d:'ដាក់ពាក្យស្នើសុំច្បាប់ឈប់សម្រាកថ្មី',hC2t:'ស្ថានភាពច្បាប់',hC2d:'ពិនិត្យថ្ងៃដែលនៅសល់ ប្រវត្តិ និងព្រីនការស្នើ',hC3t:'ផ្ទាំងបញ្ជា HR',hC3d:'អនុម័ត គ្រប់គ្រងការស្នើ និងព័ត៌មានបុគ្គលិក',back:'ត្រឡប់',rTitle:'ស្នើសុំច្បាប់',stTitle:'ស្ថានភាពច្បាប់',hrTitle:'ផ្ទាំងបញ្ជា HR',rgTitle:'បញ្ចូលលេខអត្តសញ្ញាណ',rgSub:'អត្តសញ្ញាណរបស់អ្នកនឹងត្រូវបានផ្ទៀងផ្ទាត់',rgBtn:'ផ្ទៀងផ្ទាត់ & បន្ត',stgTitle:'បញ្ចូលលេខអត្តសញ្ញាណ',stgSub:'មើលថ្ងៃដែលនៅសល់ និងប្រវត្តិ',stgBtn:'មើលច្បាប់របស់ខ្ញុំ',rsl1:'ផ្ទៀងអត្តសញ្ញាណ',rsl2:'បំពេញទម្រង់',rsl3:'មើលជាមុន',rsl4:'បញ្ជាក់',rsh1:'ព័ត៌មានបុគ្គលិក',rsh2:'ព័ត៌មានការស្នើ',rsh3:'ព័ត៌មានការដាក់ពាក្យ',rlEid:'លេខអត្តសញ្ញាណ',rlName:'ឈ្មោះពេញ',rlGen:'ភេទ',rlPos:'មុខតំណែង',rlType:'ប្រភេទច្បាប់',rlFrom:'ចាប់ពីថ្ងៃ',rlTo:'ដល់ថ្ងៃ',rlRsn:'មូលហេតុ',rlSdate:'ថ្ងៃដាក់ពាក្យ',rlSloc:'ទីតាំង',lt1:'ច្បាប់ប្រចាំឆ្នាំ',lt2:'ច្បាប់ឈឺ',lt3:'ច្បាប់បន្ទាន់',lt4:'ច្បាប់មាតុ/បិតុភាព',lt5:'ច្បាប់គ្មានប្រាក់',lt6:'ផ្សេងៗ',dinfo:'ចំនួនថ្ងៃការងារ',dsub:'មិនរាប់ថ្ងៃចុងសប្តាហ៍',balUsed:'បានប្រើឆ្នាំនេះ',rpBtn:'មើលជាមុន & បន្ត →',rprTitle:'ពិនិត្យការស្នើ',pnHd:'សំខាន់:',pnBd:' បន្ទាប់ពីបញ្ជាក់ សូមព្រីនទម្រង់នេះ ចុះហត្ថលេខា ហើយដាក់ជូន HR។',editBtn:'កែប្រែ',conTxt:'បញ្ជាក់ & ព្រីន',stTotLbl:'ថ្ងៃសរុប',stUsedLbl:'បានប្រើ',stRemLbl:'នៅសល់',stBalTitle:'ថ្ងៃច្បាប់ប្រចាំឆ្នាំ',stHistTitle:'ប្រវត្តិការស្នើ',stTh1:'លេខ',stTh2:'ប្រភេទ',stTh3:'ចាប់ពី',stTh4:'ដល់',stTh5:'ថ្ងៃ',stTh6:'ស្ថានភាព',stTh7:'ព្រីន',stNoData:'មិនមានប្រវត្តិ។',hrLt:'ចូលប្រព័ន្ធ HR',hrLs:'សម្រាប់បុគ្គលិក HR ដែលមានការអនុញ្ញាត',hrLu:'ឈ្មោះអ្នកប្រើ',hrLp:'ពាក្យសម្ងាត់',hrLbtn:'ចូល',hrLerr:'ឈ្មោះ ឬពាក្យសម្ងាត់មិនត្រឹមត្រូវ។',hrGreet:'សូមស្វាគមន៍, ',hrGsub:'វិបផតែ HR ឡក តន អាយប៊ីស៊ី',hrLo:'ចាកចេញ',hrNt1:'ការស្នើ',hrNt2:'ទិន្នន័យបុគ្គលិក',hrStLbl:'សរុប',hrSpLbl:'រង់ចាំ',hrSaLbl:'អនុម័ត',hrSrLbl:'បដិសេធ',hftAll:'ទាំងអស់',hftPend:'រង់ចាំ',hftAppr:'អនុម័ត',hftRej:'បដិសេធ',hrTh1:'លេខ',hrTh2:'បុគ្គលិក',hrTh3:'ប្រភេទ',hrTh4:'ចាប់ពី',hrTh5:'ថ្ងៃ',hrTh6:'ស្ថានភាព',hrTh7:'សកម្មភាព',hrApprove:'អនុម័ត',hrReject:'បដិសេធ',hrSh:'ទំព័របុគ្គលិក',hrSth1:'អត្តសញ្ញាណ',hrSth2:'ឈ្មោះ',hrSth3:'មុខតំណែង',hrSth4:'សរុប',hrSth5:'បានប្រើ',hrSth6:'នៅសល់',approveQ:'អនុម័តការស្នើនេះ?',rejectQ:'បដិសេធការស្នើនេះ?',notFound:'រកមិនឃើញ។',daysRem:'ថ្ងៃនៅសល់',errFields:'សូមបំពេញព័ត៌មានទាំងអស់។',errDate:'ថ្ងៃបញ្ចប់ត្រូវក្រោយថ្ងៃចាប់ផ្តើម។',errType:'សូមជ្រើសប្រភេទច្បាប់។',sending:'កំពុងដាក់...',success:'ការស្នើបានជោគជ័យ!',errSubmit:'ការដាក់ពាក្យបរាជ័យ។',male:'ប្រុស',female:'ស្រី',ptEid:'លេខអត្តសញ្ញាណ',ptName:'ឈ្មោះ',ptGen:'ភេទ',ptPos:'មុខតំណែង',ptType:'ប្រភេទ',ptFrom:'ចាប់ពី',ptTo:'ដល់',ptDays:'ចំនួនថ្ងៃ',ptRsn:'មូលហេតុ',ptSub:'ថ្ងៃដាក់'}
+  en:{hEy:'Late / Leave Early / Annual Leave Request',hSub:'Insurance Brokers (Cambodia) Co., Ltd.',hC1t:'Request Leave',hC1d:'Submit a new annual or special leave request',hC2t:'My Leave Status',hC2d:'Check remaining days, history and print past requests',hC3t:'HR Dashboard',hC3d:'Approve, manage requests and staff records',back:'Back',rTitle:'Request Leave',stTitle:'My Leave Status',hrTitle:'HR Dashboard',rgTitle:'Enter Your Employee ID',rgSub:'Your identity will be verified before proceeding',rgBtn:'Verify & Continue',stgTitle:'Enter Your Employee ID',stgSub:'View your leave balance and history',stgBtn:'View My Leave',rsl1:'Verify ID',rsl2:'Fill Form',rsl3:'Review',rsl4:'Confirm',rsh1:'Staff Information',rsh2:'Leave Details',rsh3:'Submission Info',rlEid:'Employee ID',rlName:'Full Name',rlGen:'Gender',rlPos:'Position',rlType:'Leave Type',rlFrom:'From Date',rlTo:'To Date',rlRsn:'Reason',rlSdate:'Submission Date',rlSloc:'Location',lt1:'Annual Leave',lt2:'Sick Leave',lt3:'Emergency Leave',lt4:'Special Leave',lt5:'Unpaid Leave',lt6:'Other',lt7:'Training / Mission',dinfo:'Working days requested',dsub:'Excluding weekends',balUsed:'Used this year',rpBtn:'Preview & Continue →',rprTitle:'Review Your Request',pnHd:'',pnBd:'Your request has been sent to the HR team.<br><br><strong>Please print the form, sign it yourself, and bring it to management for approval.</strong><br><br>HR will notify you when your request is approved.',editBtn:'Edit',conTxt:'Confirm & Print',stTotLbl:'Total Days',stUsedLbl:'Used',stRemLbl:'Remaining',stBalTitle:'Annual Leave Balance',stHistTitle:'Leave History',stTh1:'ID',stTh2:'Type',stTh3:'From',stTh4:'To',stTh5:'Days',stTh6:'Status',stTh7:'Print',stNoData:'No leave history found.',hrLt:'HR Access',hrLs:'Authorised personnel only',hrLu:'Username',hrLp:'Password',hrLbtn:'Login',hrLerr:'Invalid credentials.',hrGreet:'Welcome back, ',hrGsub:'Lockton IBS HR Portal',hrLo:'Logout',hrNt1:'Requests',hrNt2:'Staff Records',hrStLbl:'Total',hrSpLbl:'Pending',hrSaLbl:'Approved',hrSrLbl:'Rejected',hftAll:'All',hftPend:'Pending',hftAppr:'Approved',hftRej:'Rejected',hrTh1:'Req ID',hrTh2:'Staff',hrTh3:'Type',hrTh4:'From',hrTh5:'Days',hrTh6:'Status',hrTh7:'Action',hrApprove:'Approve',hrReject:'Reject',hrSh:'Staff Registry',hrSth1:'ID',hrSth2:'Name',hrSth3:'Position',hrSth4:'Total',hrSth5:'Used',hrSth6:'Remaining',approveQ:'Approve this request?',rejectQ:'Reject this request?',notFound:'Employee ID not found.',daysRem:'days remaining',errFields:'Please fill in all required fields.',errDate:'End date must be after start date.',errType:'Please select a leave type.',sending:'Submitting...',success:'Submitted! Preparing print...',errSubmit:'Submission failed. Try again.',male:'Male',female:'Female',ptEid:'Employee ID',ptName:'Full Name',ptGen:'Gender',ptPos:'Position',ptType:'Leave Type',ptFrom:'From',ptTo:'To',ptDays:'Working Days',ptRsn:'Reason',ptSub:'Submitted'},
+  kh:{hEy:'ស្នើសុំឈប់សម្រាកប្រចាំឆ្នាំ/ មកយឺត / សុំចេញមុន',hSub:'ការស្នើសុំច្បាប់ឈប់សម្រាក',hC1t:'ស្នើសុំច្បាប់',hC1d:'ដាក់ពាក្យស្នើសុំច្បាប់ឈប់សម្រាកថ្មី',hC2t:'ការឈប់សម្រាករបស់ខ្ញុំ',hC2d:'ពិនិត្យថ្ងៃដែលនៅសល់ ប្រវត្តិច្បាប់ដែលបានសុំ និងព្រីន FORM ដែលបានស្នើរួច',hC3t:'HR Dashboard',hC3d:'អនុម័ត គ្រប់គ្រងការស្នើ និងព័ត៌មានបុគ្គលិក',back:'ត្រឡប់ក្រោយ',rTitle:'ស្នើសុំច្បាប់',stTitle:'ស្ថានភាពច្បាប់',hrTitle:'ផ្ទាំងបញ្ជា HR',rgTitle:'បញ្ចូលលេខអត្តសញ្ញាណ',rgSub:'អត្តសញ្ញាណរបស់អ្នកនឹងត្រូវបានផ្ទៀងផ្ទាត់',rgBtn:'ផ្ទៀងផ្ទាត់ & បន្ត',stgTitle:'បញ្ចូលលេខអត្តសញ្ញាណ',stgSub:'មើលថ្ងៃដែលនៅសល់ និងប្រវត្តិ',stgBtn:'មើលច្បាប់របស់ខ្ញុំ',rsl1:'ផ្ទៀងអត្តសញ្ញាណ',rsl2:'បំពេញទម្រង់',rsl3:'មើលជាមុន',rsl4:'បញ្ជាក់',rsh1:'ព័ត៌មានបុគ្គលិក',rsh2:'ព័ត៌មានការស្នើ',rsh3:'ព័ត៌មានការដាក់ពាក្យ',rlEid:'លេខអត្តសញ្ញាណ',rlName:'ឈ្មោះពេញ',rlGen:'ភេទ',rlPos:'មុខតំណែង',rlType:'ប្រភេទច្បាប់',rlFrom:'ចាប់ពីថ្ងៃ',rlTo:'ដល់ថ្ងៃ',rlRsn:'មូលហេតុ',rlSdate:'ថ្ងៃដាក់ពាក្យ',rlSloc:'ទីតាំង',lt1:'ច្បាប់ប្រចាំឆ្នាំ',lt2:'ច្បាប់ឈឺ',lt3:'ច្បាប់បន្ទាន់',lt4:'ច្បាប់ពិសេស',lt5:'ច្បាប់គ្មានប្រាក់',lt6:'ផ្សេងៗ',lt7:'បេសកកម្ម / វគ្គបណ្ត',dinfo:'ចំនួនថ្ងៃការងារ',dsub:'មិនរាប់ថ្ងៃចុងសប្តាហ៍',balUsed:'បានប្រើឆ្នាំនេះ',rpBtn:'មើលជាមុន & បន្ត →',rprTitle:'ពិនិត្យការស្នើ',pnHd:'សំខាន់:',pnBd:' បន្ទាប់ពីបញ្ជាក់ សូមព្រីនទម្រង់នេះ ចុះហត្ថលេខា ហើយដាក់ជូន HR។',editBtn:'កែប្រែ',conTxt:'បញ្ជាក់ & ព្រីន',stTotLbl:'ថ្ងៃសរុប',stUsedLbl:'បានប្រើ',stRemLbl:'នៅសល់',stBalTitle:'ថ្ងៃច្បាប់ប្រចាំឆ្នាំ',stHistTitle:'ប្រវត្តិការស្នើ',stTh1:'លេខ',stTh2:'ប្រភេទ',stTh3:'ចាប់ពី',stTh4:'ដល់',stTh5:'ថ្ងៃ',stTh6:'ស្ថានភាព',stTh7:'ព្រីន',stNoData:'មិនមានប្រវត្តិ។',hrLt:'ចូលប្រព័ន្ធ HR',hrLs:'សម្រាប់បុគ្គលិក HR ដែលមានការអនុញ្ញាត',hrLu:'ឈ្មោះអ្នកប្រើ',hrLp:'ពាក្យសម្ងាត់',hrLbtn:'ចូល',hrLerr:'ឈ្មោះ ឬពាក្យសម្ងាត់មិនត្រឹមត្រូវ។',hrGreet:'សូមស្វាគមន៍, ',hrGsub:'វិបផតែ HR ឡក តន អាយប៊ីស៊ី',hrLo:'ចាកចេញ',hrNt1:'ការស្នើ',hrNt2:'ទិន្នន័យបុគ្គលិក',hrStLbl:'សរុប',hrSpLbl:'រង់ចាំ',hrSaLbl:'អនុម័ត',hrSrLbl:'បដិសេធ',hftAll:'ទាំងអស់',hftPend:'រង់ចាំ',hftAppr:'អនុម័ត',hftRej:'បដិសេធ',hrTh1:'លេខ',hrTh2:'បុគ្គលិក',hrTh3:'ប្រភេទ',hrTh4:'ចាប់ពី',hrTh5:'ថ្ងៃ',hrTh6:'ស្ថានភាព',hrTh7:'សកម្មភាព',hrApprove:'អនុម័ត',hrReject:'បដិសេធ',hrSh:'ទំព័របុគ្គលិក',hrSth1:'អត្តសញ្ញាណ',hrSth2:'ឈ្មោះ',hrSth3:'មុខតំណែង',hrSth4:'សរុប',hrSth5:'បានប្រើ',hrSth6:'នៅសល់',approveQ:'អនុម័តការស្នើនេះ?',rejectQ:'បដិសេធការស្នើនេះ?',notFound:'រកមិនឃើញ។',daysRem:'ថ្ងៃនៅសល់',errFields:'សូមបំពេញព័ត៌មានទាំងអស់។',errDate:'ថ្ងៃបញ្ចប់ត្រូវក្រោយថ្ងៃចាប់ផ្តើម។',errType:'សូមជ្រើសប្រភេទច្បាប់។',sending:'កំពុងដាក់...',success:'ការស្នើបានជោគជ័យ!',errSubmit:'ការដាក់ពាក្យបរាជ័យ។',male:'ប្រុស',female:'ស្រី',ptEid:'លេខអត្តសញ្ញាណ',ptName:'ឈ្មោះ',ptGen:'ភេទ',ptPos:'មុខតំណែង',ptType:'ប្រភេទ',ptFrom:'ចាប់ពី',ptTo:'ដល់',ptDays:'ចំនួនថ្ងៃ',ptRsn:'មូលហេតុ',ptSub:'ថ្ងៃដាក់'}
 };
 function tx(k){return(T[LANG]||T.en)[k]||T.en[k]||k;}
 function setLang(l){LANG=l;localStorage.setItem('lang',l);document.querySelectorAll('.lb').forEach(b=>b.classList.remove('on'));document.querySelectorAll('.lb[data-lang="'+l+'"]').forEach(b=>b.classList.add('on'));applyLang();}
@@ -78,7 +78,7 @@ function applyLang(){
   s('rl-eid','rlEid');s('rl-name','rlName');s('rl-gen','rlGen');s('rl-pos','rlPos');
   s('rl-type','rlType');s('rl-from','rlFrom');s('rl-to','rlTo');s('rl-rsn','rlRsn');
   s('rl-sdate','rlSdate');s('rl-sloc','rlSloc');
-  s('lt1','lt1');s('lt2','lt2');s('lt3','lt3');s('lt4','lt4');s('lt5','lt5');s('lt6','lt6');
+  s('lt1','lt1');s('lt2','lt2');s('lt3','lt3');s('lt4','lt4');s('lt5','lt5');s('lt6','lt6');s('lt7','lt7');
   s('r-dinfo','dinfo');s('r-dsub','dsub');s('r-bal-used-lbl','balUsed');s('r-prev-btn','rpBtn');
   s('rpr-title','rprTitle');s('r-edit-btn','editBtn');s('r-con-txt','conTxt');
   const _pnBd=document.getElementById('pn-bd');if(_pnBd)_pnBd.innerHTML=tx('pnBd');
@@ -156,7 +156,6 @@ function hdGetLast(){const s=document.querySelector('input[name=halfday-last]:ch
 function hdLabel(v){return v==='morning'?'Morning':v==='afternoon'?'Evening':'';}
 function getActualDays(from,to){
   const ltype=document.querySelector('input[name=ltype]:checked');
-  if(ltype&&['Training','Company Mission'].includes(ltype.value))return 0;
   const wd=workDays(from,to);
   const single=from===to;
   const fv=hdGetFirst(),lv=single?fv:hdGetLast();
@@ -244,6 +243,11 @@ async function apiPost(action,payload={}){
   const data=await res.json();
   if(data.newToken){hrToken=data.newToken;try{const _s=JSON.parse(sessionStorage.getItem('hr_sess')||'{}');_s.token=data.newToken;sessionStorage.setItem('hr_sess',JSON.stringify(_s));}catch(e){}}
   return data;
+}
+
+// Authenticated HR helper — auto-attaches token
+async function apiHR(action, data={}){
+  return apiPost(action, {...data, token:hrToken||''});
 }
 
 // ── MOCK (sample data removed — uses real sheet) ─────────────────────────
@@ -406,14 +410,13 @@ async function rConfirm(){
   const halfNote=getHalfNote(from,to);
   const payload={employeeId:rStaff.empId,name:rStaff.name,gender:rStaff.gender,position:document.getElementById('rf-pos').value||rStaff.position,leaveType:(ltype.value==='Other'?(document.getElementById('rf-other-type').value.trim()||'Other'):ltype.value)+(halfNote),dateFrom:from,dateTo:to,workingDays:days,halfFirstDay:hdGetFirst(),halfLastDay:hdGetLast(),reason:document.getElementById('rf-rsn').value,submissionDate:todayFmt(),submittedFrom:document.getElementById('rf-sloc').value||'Phnom Penh',status:'Pending',language:LANG.toUpperCase(),timestamp:new Date().toISOString()};
   if(isTraining){
-    // Training/Mission: send telegram, don't count as leave, no print
-    payload.workingDays=0;
-    if(!isMock()) apiPost('sendTelegram',{message:'[Training/Mission]\nStaff: '+rStaff.name+' ('+rStaff.empId+')\nType: '+ltype.value+'\nFrom: '+from+'\nTo: '+to+'\nReason: '+payload.reason,token:hrToken||''}).catch(()=>{});
+    // Training/Mission: submit to sheets (noLeave handled server-side), no print required
+    if(!isMock()) apiPost('submitRequest',payload).catch(()=>{});
     setRStep(4);setReqBar(0);
     document.getElementById('req-form').style.display='none';
     document.getElementById('r-success').style.display='flex';
     btn.disabled=false;sp.style.display='none';txt.textContent=tx('conTxt');
-    toast('Notice sent to HR','ok2');
+    toast('Submitted to HR','ok2');
     _isSubmitting=false;
     return;
   }
@@ -996,12 +999,87 @@ function hrRenderAnalytics(){
   const empty=document.getElementById('an-noticeempty');
   if(!noticeStats.length){tbody.innerHTML='';empty.style.display='block';return;}
   empty.style.display='none';
-  tbody.innerHTML=noticeStats.map(s=>
-    `<tr><td style="font-weight:500">${s.name}</td>`+
+  tbody.innerHTML=noticeStats.map(s=>{
+    var canConvert,extraCol;
+    if(_timedMode){
+      const totalMins=s.totalMinutes||0;
+      const days=Math.floor(totalMins/WORK_DAY_MINS);
+      canConvert=days>=1;
+      extraCol=`<td style="text-align:center;color:var(--txt2);font-size:11px">${_fmtMins(totalMins)}</td>`+
+        `<td style="text-align:center">${canConvert?`<button onclick="convertLatePage('${s.empId}','${s.name}',${JSON.stringify(s).replace(/'/g,"\\'")})" style="font-size:11px;padding:3px 10px;border:none;border-radius:6px;background:var(--red);color:#fff;cursor:pointer">Convert (${days}d)</button>`:'—'}</td>`;
+    }else{
+      canConvert=s.late>=_lateThreshold;
+      extraCol=`<td style="text-align:center">${canConvert?`<button onclick="convertLatePage('${s.empId}','${s.name}',${JSON.stringify(s).replace(/'/g,"\\'")})" style="font-size:11px;padding:3px 10px;border:none;border-radius:6px;background:var(--red);color:#fff;cursor:pointer">Convert</button>`:'—'}</td>`;
+    }
+    return`<tr><td style="font-weight:500">${s.name}</td>`+
     `<td style="text-align:center;color:var(--warn)">${s.late}</td>`+
     `<td style="text-align:center;color:var(--red)">${s.early}</td>`+
-    `<td style="text-align:center;font-weight:600">${s.total}</td></tr>`
-  ).join('');
+    `<td style="text-align:center;font-weight:600">${s.total}</td>`+
+    extraCol+`</tr>`;
+  }).join('');
+}
+
+let _lateThreshold=2;
+let _timedMode=false; // OFF by default — turn ON in Analytics tab
+const WORK_DAY_MINS=480; // 8h work day (08:30–17:30 minus 1h lunch)
+
+function _fmtMins(m){const h=Math.floor(m/60),mn=m%60;return h?`${h}h ${mn}m`:`${mn}m`;}
+
+async function loadLateThreshold(){
+  const el=document.getElementById('an-late-threshold');
+  try{
+    const [tRes,mRes]=await Promise.all([apiHR('getLateThreshold',{}),apiHR('getTimedMode',{})]);
+    if(tRes&&tRes.threshold){_lateThreshold=tRes.threshold;if(el)el.value=tRes.threshold;}
+    if(mRes){_timedMode=!!mRes.enabled;_applyTimedModeUI();}
+  }catch(e){}
+}
+function _applyTimedModeUI(){
+  const tog=document.getElementById('an-timed-toggle');
+  const timeTh=document.getElementById('an-th-time');
+  if(tog){tog.textContent=_timedMode?'ON':'OFF';tog.style.background=_timedMode?'var(--ok)':'var(--txt3)';}
+  if(timeTh)timeTh.style.display=_timedMode?'':'none';
+  hrRenderAnalytics();
+}
+async function toggleTimedMode(){
+  _timedMode=!_timedMode;
+  try{await apiHR('setTimedMode',{enabled:_timedMode});}catch(e){}
+  _applyTimedModeUI();
+  toast(_timedMode?'Time-based mode ON':'Count-based mode ON','ok2');
+}
+async function saveLateThreshold(){
+  const el=document.getElementById('an-late-threshold');if(!el)return;
+  const n=parseInt(el.value,10);if(isNaN(n)||n<1){toast('Enter a valid number','bad');return;}
+  try{
+    await apiHR('setLateThreshold',{threshold:n});
+    _lateThreshold=n;toast('Threshold saved','ok2');hrRenderAnalytics();
+  }catch(e){toast('Failed to save','bad');}
+}
+async function convertLatePage(empId,empName,stat){
+  const staffInfo=allStaffList.find(s=>String(s.empId)===String(empId))||{};
+  var days,confirmMsg;
+  if(_timedMode){
+    const totalMins=stat.totalMinutes||0;
+    days=Math.floor(totalMins/WORK_DAY_MINS);
+    confirmMsg=`Convert accumulated time for ${empName}?\n\nLate: ${_fmtMins(stat.lateMinutes||0)}\nEarly: ${_fmtMins(stat.earlyMinutes||0)}\nTotal: ${_fmtMins(totalMins)} → ${days} day(s) deducted`;
+  }else{
+    const lateCount=stat.late||0;
+    days=Math.floor(lateCount/_lateThreshold);
+    confirmMsg=`Convert ${lateCount} late arrivals → ${days} day(s) deducted from ${empName}?`;
+  }
+  if(days<=0){toast('Not enough accumulated time/count yet','bad');return;}
+  if(!confirm(confirmMsg))return;
+  try{
+    const res=await apiHR('convertLateToLeave',{
+      empId,empName,
+      lateCount:stat.late||0,
+      totalMinutes:stat.totalMinutes||0,
+      lateMinutes:stat.lateMinutes||0,
+      earlyMinutes:stat.earlyMinutes||0,
+      gender:staffInfo.gender||'',position:staffInfo.position||'',location:staffInfo.location||'Phnom Penh'
+    });
+    if(res&&res.result==='success'){toast(`${days} day(s) deducted — Req ${res.requestId}`,'ok2');hrLoadData();}
+    else{toast(res&&res.error||'Convert failed','bad');}
+  }catch(e){toast('Error: '+e,'bad');}
 }
 
 let allStaffList=[];
@@ -1083,13 +1161,14 @@ function hrRenderStaff(){
   }).join('');
 }
 function hrTab(tab){sessionStorage.setItem('hr_tab',tab);
-  ['req','staff','attendance','analytics','export'].forEach(t=>{
-    document.getElementById('hr-tab-'+t).style.display=tab===t?'block':'none';
+  ['req','staff','attendance','analytics','export','manual'].forEach(t=>{
+    const el=document.getElementById('hr-tab-'+t);if(el)el.style.display=tab===t?'block':'none';
     const btn=document.getElementById('nt-'+t);if(btn)btn.classList.toggle('on',tab===t);
   });
   if(tab==='export')expInit();
-  if(tab==='analytics'){hrLoadNotices();anApplyFilters();}
+  if(tab==='analytics'){hrLoadNotices();anApplyFilters();loadLateThreshold();}
   if(tab==='staff')hrRenderStaff();
+  if(tab==='manual')hrManualInit();
 }
 // ══════════════════ EXPORT ══════════════════════
 function expInit(){
@@ -1283,6 +1362,113 @@ async function submitNotice(){
 
 // ══════════════════ NOTICE (LATE/EARLY) ══════════════════════
 let ntStaff=null;
+let _ntCurrentType=null; // 'late' | 'early'
+
+// ── iOS Drum Picker ───────────────────────────────────────────
+const DRUM_IH=42; // item height px
+const DRUM_PAD=DRUM_IH*2; // 2-item padding spacer at top/bottom
+
+function _ntBuildDrumCol(col,items){
+  const pad=`<div style="height:${DRUM_PAD}px"></div>`;
+  col.innerHTML=pad+items.map((it,i)=>`<div class="drum-item" data-v="${it.v}" data-i="${i}">${it.label}</div>`).join('')+pad;
+  col.addEventListener('scroll',()=>_ntDrumHighlight(col),{passive:true});
+  _ntDrumHighlight(col);
+}
+function _ntDrumHighlight(col){
+  const idx=Math.round(col.scrollTop/DRUM_IH);
+  col.querySelectorAll('.drum-item').forEach((el,i)=>el.classList.toggle('drum-sel',i===idx));
+  // Sync manual inputs on HH/MM columns
+  if(col.id==='drum-hh'||col.id==='drum-mm'||col.id==='drum-ap'){
+    const v=_ntDrumGet(col);
+    if(col.id==='drum-hh'){const e=document.getElementById('nt-m-hh');if(e)e.value=v;}
+    if(col.id==='drum-mm'){const e=document.getElementById('nt-m-mm');if(e)e.value=v;}
+    if(col.id==='drum-ap'){
+      document.getElementById('nt-m-am')?.classList.toggle('on',v==='AM');
+      document.getElementById('nt-m-pm')?.classList.toggle('on',v==='PM');
+    }
+  }
+}
+function _ntDrumGet(col){
+  const idx=Math.round(col.scrollTop/DRUM_IH);
+  return col.querySelectorAll('.drum-item')[idx]?.dataset.v||'';
+}
+function _ntDrumSet(col,val){
+  const items=col.querySelectorAll('.drum-item');
+  const idx=Array.from(items).findIndex(x=>x.dataset.v===val);
+  if(idx>=0){col.scrollTop=idx*DRUM_IH;}
+}
+function ntInitDrum(){
+  const hhCol=document.getElementById('drum-hh');
+  const mmCol=document.getElementById('drum-mm');
+  const apCol=document.getElementById('drum-ap');
+  _ntBuildDrumCol(hhCol,Array.from({length:12},(_,i)=>{const v=String(i+1).padStart(2,'0');return{v,label:v};}));
+  _ntBuildDrumCol(mmCol,Array.from({length:60},(_,i)=>{const v=String(i).padStart(2,'0');return{v,label:v};}));
+  _ntBuildDrumCol(apCol,[{v:'AM',label:'AM'},{v:'PM',label:'PM'}]);
+  // Auto-set to current time with auto AM/PM
+  const now=new Date();
+  const h=now.getHours(),m=now.getMinutes();
+  const isAM=h<12;
+  const dispH=h%12||12;
+  setTimeout(()=>{
+    _ntDrumSet(hhCol,String(dispH).padStart(2,'0'));
+    _ntDrumSet(mmCol,String(m).padStart(2,'0'));
+    _ntDrumSet(apCol,isAM?'AM':'PM');
+    _ntDrumHighlight(hhCol);_ntDrumHighlight(mmCol);_ntDrumHighlight(apCol);
+    // Sync manual fields
+    const mhh=document.getElementById('nt-m-hh');
+    const mmm=document.getElementById('nt-m-mm');
+    if(mhh)mhh.value=String(dispH).padStart(2,'0');
+    if(mmm)mmm.value=String(m).padStart(2,'0');
+    document.getElementById('nt-m-am')?.classList.toggle('on',isAM);
+    document.getElementById('nt-m-pm')?.classList.toggle('on',!isAM);
+  },50);
+}
+function ntGetDrumTime(){
+  const hhCol=document.getElementById('drum-hh');
+  const mmCol=document.getElementById('drum-mm');
+  const apCol=document.getElementById('drum-ap');
+  const hh=_ntDrumGet(hhCol)||document.getElementById('nt-m-hh')?.value.trim()||'';
+  const mm=_ntDrumGet(mmCol)||document.getElementById('nt-m-mm')?.value.trim()||'';
+  const ap=_ntDrumGet(apCol)||(document.getElementById('nt-m-am')?.classList.contains('on')?'AM':'PM');
+  if(!hh||!mm)return '';
+  return String(parseInt(hh,10)).padStart(2,'0')+':'+String(parseInt(mm,10)).padStart(2,'0')+' '+ap;
+}
+function ntManualToScroll(){
+  const hhCol=document.getElementById('drum-hh');
+  const mmCol=document.getElementById('drum-mm');
+  const hh=(document.getElementById('nt-m-hh')?.value||'').trim().padStart(2,'0');
+  const mm=(document.getElementById('nt-m-mm')?.value||'').trim().padStart(2,'0');
+  const hv=parseInt(hh,10),mv=parseInt(mm,10);
+  if(!isNaN(hv)&&hv>=1&&hv<=12)_ntDrumSet(hhCol,String(hv).padStart(2,'0'));
+  if(!isNaN(mv)&&mv>=0&&mv<=59)_ntDrumSet(mmCol,String(mv).padStart(2,'0'));
+}
+function ntManualAmPm(val){
+  const apCol=document.getElementById('drum-ap');
+  _ntDrumSet(apCol,val);
+  document.getElementById('nt-m-am')?.classList.toggle('on',val==='AM');
+  document.getElementById('nt-m-pm')?.classList.toggle('on',val==='PM');
+}
+function ntOpenPicker(type){
+  _ntCurrentType=type;
+  const title=document.getElementById('ntps-title');
+  if(title)title.textContent=type==='late'?'Late Arrival':'Leave Early';
+  const retRow=document.getElementById('nt-return-row');
+  if(retRow)retRow.style.display=type==='late'?'block':'none';
+  // Reset return time fields
+  ['nt-return-hh','nt-return-mm'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  ntSetAmPm('nt-return','AM');
+  // Reset reason
+  const reason=document.getElementById('nt-reason');
+  if(reason)reason.value='';
+  ntInitDrum();
+  const overlay=document.getElementById('nt-picker-overlay');
+  if(overlay){overlay.style.display='flex';document.body.style.overflow='hidden';}
+}
+function ntClosePicker(){
+  const overlay=document.getElementById('nt-picker-overlay');
+  if(overlay)overlay.style.display='none';
+  document.body.style.overflow='';
+}
 function ntTBInput(el,min,max,nextId){
   el.value=el.value.replace(/\D/g,'');
   if(el.value.length===2){
@@ -1323,12 +1509,20 @@ function ntGetTime(prefix){
   const ampm=amBtn&&amBtn.classList.contains('on')?'AM':'PM';
   return String(hNum).padStart(2,'0')+':'+String(mNum).padStart(2,'0')+' '+ampm;
 }
-function ntUpdateTimeLabel(){
-  const isLate=document.querySelector('input[name=ntype]:checked')?.value==='Late Arrival';
-  const lbl=document.getElementById('nt-time-lbl');
-  if(lbl)lbl.textContent=isLate?'Arrival Time':'Departure Time';
+function ntReset(){
+  ntStaff=null;_ntCurrentType=null;
+  document.getElementById('nt-gate').style.display='block';
+  document.getElementById('nt-cards').style.display='none';
+  document.getElementById('nt-success').style.display='none';
+  ntClosePicker();
+  document.getElementById('nt-name-input').value='';
+  document.getElementById('nt-id-input').value='';
+  document.getElementById('nt-idfb').textContent='';
 }
-function ntReset(){ntStaff=null;document.getElementById('nt-gate').style.display='block';document.getElementById('nt-form').style.display='none';document.getElementById('nt-success').style.display='none';document.getElementById('nt-name-input').value='';document.getElementById('nt-id-input').value='';document.getElementById('nt-idfb').textContent='';}
+function ntBackToGate(){
+  document.getElementById('nt-cards').style.display='none';
+  document.getElementById('nt-gate').style.display='block';
+}
 async function ntVerify(){
   const name=document.getElementById('nt-name-input').value.trim();
   const id=document.getElementById('nt-id-input').value.trim().toUpperCase();
@@ -1343,34 +1537,39 @@ async function ntVerify(){
     if(res.result==='success'){
       _gmo.cancel(true);
       ntStaff=res.staff;ntStaff.empId=id;
-      document.getElementById('nt-staff-name').value=name;
-      document.getElementById('nt-staff-id').value=id;
+      // Show staff info chip
+      const chipName=document.getElementById('nt-chip-name');
+      const chipId=document.getElementById('nt-chip-id');
+      const chipPos=document.getElementById('nt-chip-pos');
+      const chipPosWrap=document.getElementById('nt-chip-pos-wrap');
+      if(chipName)chipName.textContent=ntStaff.name||name;
+      if(chipId)chipId.textContent=id;
+      if(chipPos&&ntStaff.position){chipPos.textContent=ntStaff.position;if(chipPosWrap)chipPosWrap.style.display='';}
       document.getElementById('nt-gate').style.display='none';
-      document.getElementById('nt-form').style.display='block';
+      document.getElementById('nt-cards').style.display='block';
     } else {_gmo.cancel(false);fb.textContent='Name or ID not found.';fb.className='idfb err';setTimeout(()=>gateSetError('nt-gate'),210);}
   }catch(e){_gmo.cancel(false);toast('Error','bad');}finally{gateSetLoading('nt-gate','nt-gate-btn',false);sp.style.display='none';}
 }
 async function ntSubmit(){
-  const ntype=document.querySelector('input[name=ntype]:checked');
-  const time=ntGetTime('nt-time');
+  const time=ntGetDrumTime();
   const ret=ntGetTime('nt-return');
   const reason=document.getElementById('nt-reason').value.trim();
-  if(!ntype){toast('Please select Late Arrival or Early Departure','bad');return;}
-  if(!time){toast('Please enter the time','bad');return;}
+  if(!time){toast('Please select a time','bad');return;}
   if(!reason){toast('Please enter a reason','bad');return;}
   const btn=document.getElementById('nt-submit-btn'),sp=document.getElementById('nt-submit-sp');
   btn.disabled=true;sp.style.display='block';
   try{
     if(!isMock()){
       const res=await apiPost('sendNotice',{
-        noticeType:ntype.value==='Late Arrival'?'late':'early',
+        noticeType:_ntCurrentType,
         name:ntStaff.name,empId:ntStaff.empId,
         time,returnTime:ret||'—',reason,
         noticeDate:new Date().toLocaleDateString('en-GB')
       });
       if(res.result!=='success')throw new Error('failed');
     }
-    document.getElementById('nt-form').style.display='none';
+    ntClosePicker();
+    document.getElementById('nt-cards').style.display='none';
     document.getElementById('nt-success').style.display='flex';
   }catch(e){toast('Failed to send. Try again.','bad');}finally{btn.disabled=false;sp.style.display='none';}
 }
@@ -1525,4 +1724,113 @@ async function attnImport(){
     btn.disabled=false;
     btn.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Import to Google Sheets';
   }
+}
+
+// ── MANUAL ENTRY ─────────────────────────────────────────────────
+let _manualStaff=null;
+function hrManualInit(){
+  _manualStaff=null;
+  ['me-result','me-type-sel','me-form-leave','me-form-notice'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
+  const eid=document.getElementById('me-empid');if(eid)eid.value='';
+}
+function meShowSection(section){
+  document.getElementById('me-form-leave').style.display=section==='leave'?'block':'none';
+  document.getElementById('me-form-notice').style.display=section==='notice'?'block':'none';
+  // highlight active button
+  const bl=document.getElementById('me-btn-leave'),bn=document.getElementById('me-btn-notice');
+  if(bl){bl.style.background=section==='leave'?'var(--red)':'var(--surface2)';bl.style.color=section==='leave'?'#fff':'var(--txt2)';bl.style.borderColor=section==='leave'?'var(--red)':'var(--border)';}
+  if(bn){bn.style.background=section==='notice'?'var(--red)':'var(--surface2)';bn.style.color=section==='notice'?'#fff':'var(--txt2)';bn.style.borderColor=section==='notice'?'var(--red)':'var(--border)';}
+}
+function meToggleReturn(){
+  const type=document.getElementById('me-ntype').value;
+  const lbl=document.getElementById('me-ntime-lbl');
+  const retRow=document.getElementById('me-return-row');
+  if(lbl)lbl.textContent=type==='late'?'Arrival Time':'Departure Time';
+  if(retRow)retRow.style.display=type==='late'?'block':'none';
+}
+async function hrManualLookup(){
+  const eid=document.getElementById('me-empid').value.trim();
+  if(!eid){toast('Enter Employee ID','bad');return;}
+  const res=await apiHR('getStaffList',{});
+  if(!res||!res.staff){toast('Failed to load staff','bad');return;}
+  const s=res.staff.find(x=>String(x.empId).trim()===eid);
+  if(!s){toast('Employee not found','bad');return;}
+  _manualStaff=s;
+  document.getElementById('me-name').textContent=s.name;
+  document.getElementById('me-pos').textContent=s.position;
+  document.getElementById('me-result').style.display='block';
+  document.getElementById('me-type-sel').style.display='block';
+  // reset forms
+  document.getElementById('me-form-leave').style.display='none';
+  document.getElementById('me-form-notice').style.display='none';
+  // reset leave form fields
+  ['me-from','me-to','me-reason'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('me-days').value='1';
+  // reset notice form fields
+  document.getElementById('me-ndate').value=todayFmt();
+  document.getElementById('me-ntime').value='';
+  document.getElementById('me-nreturn').value='';
+  document.getElementById('me-nreason').value='';
+  meToggleReturn();
+  meShowSection('leave'); // default to leave tab
+}
+function meCalcDays(){
+  const f=document.getElementById('me-from').value,t=document.getElementById('me-to').value;
+  if(f&&t&&t>=f){
+    let n=0,c=new Date(f+'T00:00:00'),e=new Date(t+'T00:00:00');
+    while(c<=e){const d=c.getDay();if(d&&d!==6)n++;c.setDate(c.getDate()+1);}
+    document.getElementById('me-days').value=n||1;
+  }
+}
+async function hrManualSubmit(){
+  if(!_manualStaff){toast('Lookup staff first','bad');return;}
+  const ltype=document.getElementById('me-ltype').value;
+  const from=document.getElementById('me-from').value;
+  const to=document.getElementById('me-to').value||from;
+  const days=parseFloat(document.getElementById('me-days').value)||1;
+  const reason=document.getElementById('me-reason').value.trim()||'Manual entry by HR';
+  if(!ltype||!from){toast('Fill all required fields','bad');return;}
+  const btn=document.getElementById('me-submit-btn');
+  btn.disabled=true;btn.textContent='Saving…';
+  try{
+    const res=await apiHR('manualEntry',{
+      employeeId:_manualStaff.empId,name:_manualStaff.name,
+      gender:_manualStaff.gender||'',position:_manualStaff.position||'',
+      location:_manualStaff.location||'Phnom Penh',
+      leaveType:ltype,dateFrom:from,dateTo:to,workingDays:days,
+      submissionDate:todayFmt(),reason
+    });
+    if(res&&res.result==='success'){
+      toast('Saved — '+res.requestId,'ok2');
+      hrManualInit();hrLoadData();
+    }else{toast(res&&res.error||'Failed to save','bad');}
+  }catch(e){toast('Error: '+e,'bad');}
+  finally{btn.disabled=false;btn.textContent='Save Leave (Silent)';}
+}
+async function hrManualNoticeSubmit(){
+  if(!_manualStaff){toast('Lookup staff first','bad');return;}
+  const ntype=document.getElementById('me-ntype').value;
+  const ndate=document.getElementById('me-ndate').value;
+  const ntime=document.getElementById('me-ntime').value;
+  const nreturn=document.getElementById('me-nreturn').value;
+  const nreason=document.getElementById('me-nreason').value.trim();
+  if(!ndate||!ntime){toast('Date and time are required','bad');return;}
+  const btn=document.getElementById('me-notice-btn');
+  btn.disabled=true;btn.textContent='Saving…';
+  try{
+    const res=await apiHR('manualNotice',{
+      empId:_manualStaff.empId,name:_manualStaff.name,
+      noticeType:ntype,noticeDate:ndate,time:ntime,
+      returnTime:nreturn||'',reason:nreason||'Manual entry by HR'
+    });
+    if(res&&res.result==='success'){
+      toast('Notice saved','ok2');
+      // reset notice fields but keep staff selected
+      document.getElementById('me-ntime').value='';
+      document.getElementById('me-nreturn').value='';
+      document.getElementById('me-nreason').value='';
+      hrLoadData();
+    }else{toast(res&&res.error||'Failed to save','bad');}
+  }catch(e){toast('Error: '+e,'bad');}
+  finally{btn.disabled=false;btn.textContent='Save Notice (Silent)';}
 }
