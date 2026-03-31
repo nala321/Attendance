@@ -1834,3 +1834,18 @@ async function hrManualNoticeSubmit(){
   }catch(e){toast('Error: '+e,'bad');}
   finally{btn.disabled=false;btn.textContent='Save Notice (Silent)';}
 }
+
+async function wipeTestUser(){
+  if(!confirm('Wipe ALL data for test user johnwich / KMEOW007?\n\nThis deletes all their requests, notices, and attendance records, and resets their leave balance to 0.\n\nThis cannot be undone.'))return;
+  const btn=document.getElementById('wipe-test-btn');
+  if(btn){btn.disabled=true;btn.textContent='Wiping...';}
+  try{
+    const res=await apiHR('wipeTestUser');
+    if(res&&res.result==='success'){
+      const d=res.deleted||{};
+      toast(`Wiped: ${d.requests||0} requests · ${d.notices||0} notices · ${d.attendance||0} attendance`,'ok2');
+      hrLoadData();
+    }else{toast('Wipe failed','bad');}
+  }catch(e){toast('Error: '+e,'bad');}
+  finally{if(btn){btn.disabled=false;btn.textContent='Wipe All Test Data';}}
+}
