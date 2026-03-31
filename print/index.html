@@ -127,10 +127,61 @@ html,body{
     justify-content:space-between;
   }
   .content{flex:1}
+  .print-bar{display:none!important}
 }
+
+/* ── Print bar (screen only) ── */
+.print-bar{
+  position:fixed;top:0;left:0;right:0;z-index:999;
+  background:#fff;
+  border-bottom:1.5px solid #e0e0e0;
+  padding:10px 20px;
+  display:flex;align-items:center;gap:12px;
+  box-shadow:0 2px 8px rgba(0,0,0,.08);
+  font-family:'Battambang',sans-serif;
+  font-size:13px;
+}
+.print-bar-logo{
+  font-weight:700;font-size:14px;color:#111;letter-spacing:.02em;
+}
+.print-bar-spacer{flex:1}
+.print-btn{
+  background:#111;color:#fff;border:none;border-radius:8px;
+  padding:8px 20px;font-size:13px;font-family:'Battambang',sans-serif;
+  cursor:pointer;display:flex;align-items:center;gap:6px;
+  font-weight:700;letter-spacing:.02em;
+  transition:background .15s;
+}
+.print-btn:hover{background:#333}
+.print-btn svg{flex-shrink:0}
+.tg-banner{
+  background:#229ED9;color:#fff;
+  border-radius:8px;padding:7px 14px;
+  font-size:12px;display:none;align-items:center;gap:8px;
+  flex:1;
+}
+.tg-banner a{color:#fff;font-weight:700;text-decoration:underline}
+/* push page content below fixed bar */
+body{padding-top:52px}
 </style>
 </head>
 <body>
+
+<!-- Print bar (hidden when actually printing) -->
+<div class="print-bar" id="print-bar">
+  <div class="print-bar-logo">LOCKTON <span style="color:#ca8a04">IBS</span></div>
+  <!-- Telegram in-app browser banner -->
+  <div class="tg-banner" id="tg-banner">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L8.32 13.617l-2.96-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.828.942z"/></svg>
+    Open in your browser to print &nbsp;
+    <a href="javascript:void(0)" id="tg-open-link">Open in Browser</a>
+  </div>
+  <div class="print-bar-spacer"></div>
+  <button class="print-btn" onclick="window.print()">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+    Print Form
+  </button>
+</div>
 
 <div class="page">
   <div class="content">
@@ -258,18 +309,51 @@ function fill(data){
   if(data.requestId){set('pf-reqid', data.requestId);}
 }
 
-// Read data from localStorage passed by portal.html
+// Detect Telegram in-app browser (or other in-app browsers that block print)
+function isTelegramBrowser(){
+  const ua = navigator.userAgent || '';
+  return /Telegram/i.test(ua) || typeof window.TelegramWebviewProxy !== 'undefined';
+}
+
+// Build an external URL for Telegram to open (uses current URL with hash)
+function buildExternalUrl(){
+  // Try to build a URL with the print data encoded in the hash so the real browser can load it
+  // We store the data in sessionStorage key for the link to re-read
+  return window.location.href;
+}
+
 window.addEventListener('load', function(){
+  // Detect Telegram / in-app browser
+  const isTG = isTelegramBrowser();
+  if(isTG){
+    const banner = document.getElementById('tg-banner');
+    if(banner) banner.style.display = 'flex';
+    // Set up "Open in Browser" link
+    const link = document.getElementById('tg-open-link');
+    if(link){
+      // Try window.open which sometimes works to open in system browser
+      link.addEventListener('click', function(e){
+        e.preventDefault();
+        // On Telegram iOS, we can try this to force external browser
+        window.open(window.location.href, '_blank');
+      });
+    }
+  }
+
+  // Load print data
   try{
     const raw = localStorage.getItem('lbs_print_data');
     if(raw){
       const data = JSON.parse(raw);
       fill(data);
-      localStorage.removeItem('lbs_print_data'); // clean up after reading
-      setTimeout(()=>window.print(), 600);
+      localStorage.removeItem('lbs_print_data');
+      // Auto-print only on non-Telegram browsers
+      if(!isTG){
+        setTimeout(()=>window.print(), 600);
+      }
     }
   } catch(e){
-    document.body.innerHTML='<p style="padding:20px;color:red">Error loading print data. Please try again.</p>';
+    document.querySelector('.page').innerHTML='<p style="padding:40px 20px;color:red;font-family:sans-serif">Error loading print data. Please go back and try again.</p>';
   }
 });
 </script>
