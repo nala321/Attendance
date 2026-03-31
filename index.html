@@ -724,6 +724,19 @@
       <!-- ── MANUAL ENTRY TAB ── -->
       <div id="hr-tab-manual" style="display:none">
 
+        <!-- Test User Tools -->
+        <div class="card" style="margin-bottom:14px;border-color:rgba(220,38,38,.25)">
+          <div class="card-head" style="background:rgba(220,38,38,.06)">
+            <div class="s-num" style="background:#dc2626"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+            <div class="card-head-title">Test User Tools</div>
+            <div style="margin-left:auto;font-size:11px;color:var(--txt3);font-family:monospace">johnwich / KMEOW007</div>
+          </div>
+          <div class="card-body" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+            <div style="font-size:13px;color:var(--txt2);flex:1;min-width:160px">Wipes all requests, notices &amp; attendance for the test account. Leave balance resets to 0.</div>
+            <button id="wipe-test-btn" onclick="wipeTestUser()" style="background:#dc2626;color:#fff;border:none;border-radius:var(--radius-sm);padding:9px 20px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0">Wipe All Test Data</button>
+          </div>
+        </div>
+
         <!-- Staff lookup (shared) -->
         <div class="card" style="margin-bottom:14px">
           <div class="card-head">
