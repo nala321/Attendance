@@ -523,7 +523,7 @@ function rPopulateSuccess(){
 // ── PRINT FILL ───────────────────────────────────
 function openPrint(data){
   localStorage.setItem('lbs_print_data', JSON.stringify(data));
-  window.open('print/','_blank');
+  window.open('print/index.html','_blank');
 }
 function fillPrint(d,from,to,days){
   const s=rStaff,name=LANG==='kh'?(s.nameKh||s.name):s.name,pos=LANG==='kh'?(s.positionKh||s.position):s.position,gen=LANG==='kh'?(s.gender==='Male'?tx('male'):tx('female')):s.gender;
@@ -1460,14 +1460,19 @@ function ntOpenPicker(type){
   // Reset reason
   const reason=document.getElementById('nt-reason');
   if(reason)reason.value='';
+  // Highlight selected type card
+  document.getElementById('nt-card-late')?.classList.toggle('nt-card-active',type==='late');
+  document.getElementById('nt-card-early')?.classList.toggle('nt-card-active',type==='early');
+  // Show inline form panel
+  const panel=document.getElementById('nt-form-panel');
+  if(panel)panel.style.display='block';
   ntInitDrum();
-  const overlay=document.getElementById('nt-picker-overlay');
-  if(overlay){overlay.style.display='flex';document.body.style.overflow='hidden';}
 }
 function ntClosePicker(){
-  const overlay=document.getElementById('nt-picker-overlay');
-  if(overlay)overlay.style.display='none';
-  document.body.style.overflow='';
+  const panel=document.getElementById('nt-form-panel');
+  if(panel)panel.style.display='none';
+  document.getElementById('nt-card-late')?.classList.remove('nt-card-active');
+  document.getElementById('nt-card-early')?.classList.remove('nt-card-active');
 }
 function ntTBInput(el,min,max,nextId){
   el.value=el.value.replace(/\D/g,'');
@@ -1512,7 +1517,7 @@ function ntGetTime(prefix){
 function ntReset(){
   ntStaff=null;_ntCurrentType=null;
   document.getElementById('nt-gate').style.display='block';
-  document.getElementById('nt-cards').style.display='none';
+  document.getElementById('nt-main').style.display='none';
   document.getElementById('nt-success').style.display='none';
   ntClosePicker();
   document.getElementById('nt-name-input').value='';
@@ -1520,8 +1525,9 @@ function ntReset(){
   document.getElementById('nt-idfb').textContent='';
 }
 function ntBackToGate(){
-  document.getElementById('nt-cards').style.display='none';
+  document.getElementById('nt-main').style.display='none';
   document.getElementById('nt-gate').style.display='block';
+  ntClosePicker();
 }
 async function ntVerify(){
   const name=document.getElementById('nt-name-input').value.trim();
@@ -1546,7 +1552,7 @@ async function ntVerify(){
       if(chipId)chipId.textContent=id;
       if(chipPos&&ntStaff.position){chipPos.textContent=ntStaff.position;if(chipPosWrap)chipPosWrap.style.display='';}
       document.getElementById('nt-gate').style.display='none';
-      document.getElementById('nt-cards').style.display='block';
+      document.getElementById('nt-main').style.display='block';
     } else {_gmo.cancel(false);fb.textContent='Name or ID not found.';fb.className='idfb err';setTimeout(()=>gateSetError('nt-gate'),210);}
   }catch(e){_gmo.cancel(false);toast('Error','bad');}finally{gateSetLoading('nt-gate','nt-gate-btn',false);sp.style.display='none';}
 }
@@ -1569,7 +1575,7 @@ async function ntSubmit(){
       if(res.result!=='success')throw new Error('failed');
     }
     ntClosePicker();
-    document.getElementById('nt-cards').style.display='none';
+    document.getElementById('nt-main').style.display='none';
     document.getElementById('nt-success').style.display='flex';
   }catch(e){toast('Failed to send. Try again.','bad');}finally{btn.disabled=false;sp.style.display='none';}
 }
