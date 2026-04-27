@@ -52,6 +52,7 @@ function goTo(v) {
   if(v==='request')rReset();
   if(v==='status')stReset();
   if(v==='notice')ntReset();
+  if(v==='home')loadHomeLeaveBoard();
   if(v==='hr'&&hrUser){
     document.getElementById('hr-login').style.display='none';
     document.getElementById('hr-dash').style.display='block';
@@ -180,6 +181,19 @@ function getHalfNote(from,to){
 }
 function workDays(f,t){let n=0,c=new Date(f+'T00:00:00'),e=new Date(t+'T00:00:00');while(c<=e){const d=c.getDay();if(d&&d!==6)n++;c.setDate(c.getDate()+1);}return n;}
 function fmtDate(iso){if(!iso)return'—';const d=iso.includes('T')||iso.includes('Z')?new Date(iso):new Date(iso+'T00:00:00');return isNaN(d.getTime())?iso:d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});}
+function fmtTimeVal(v){
+  if(!v)return'—';
+  // already HH:MM or HH:MM:SS
+  if(/^\d{1,2}:\d{2}(:\d{2})?$/.test(String(v).trim())){const p=String(v).trim().split(':');return p[0].padStart(2,'0')+':'+p[1];}
+  const d=new Date(v);
+  if(isNaN(d.getTime()))return String(v);
+  const hh=String(d.getHours()).padStart(2,'0');
+  const mm=String(d.getMinutes()).padStart(2,'0');
+  // GAS time-only values land on Dec 30 1899 — show just HH:MM
+  if(d.getFullYear()===1899)return hh+':'+mm;
+  // real datetime — show DD-MMM-YYYY, HH:MM
+  return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})+', '+hh+':'+mm;
+}
 function todayISO(){return new Date().toISOString().split('T')[0];}
 function todayFmt(){return new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'});}
 function parseDate(iso){
@@ -701,7 +715,7 @@ function renderStNotices(){
   tbody.innerHTML=stNotices.map(n=>{
     const isLate=n.type==='Late Arrival';
     const badge=isLate?'b-pending':'b-rejected';
-    return`<tr><td><span class="badge ${badge}" style="font-size:11px">${n.type}</span></td><td style="white-space:nowrap">${n.date}</td><td style="white-space:nowrap">${n.time}</td><td style="color:var(--txt2)">${n.reason||'—'}</td></tr>`;
+    return`<tr><td><span class="badge ${badge}" style="font-size:11px">${n.type}</span></td><td style="white-space:nowrap">${fmtDate(n.date)||n.date||'—'}</td><td style="white-space:nowrap">${fmtTimeVal(n.time)}</td><td style="color:var(--txt2)">${n.reason||'—'}</td></tr>`;
   }).join('');
 }
 function stPrint(i){fillPrintRecord(stHistory[i],stStaff);}
@@ -795,7 +809,7 @@ function hrRenderReqs(){
       :saving
         ?`<span style="font-size:11px;color:var(--txt3);display:flex;align-items:center;gap:5px">${spin}Saving…</span>`
         :canActMain
-          ?`<button class="abtn abtn-ok" onclick="hrUpdateStatus('${r.id}','Approved')">${tx('hrApprove')}</button><button class="abtn abtn-bad" onclick="hrUpdateStatus('${r.id}','Rejected')">${tx('hrReject')}</button>${delBtn}`
+          ?`<button class="abtn abtn-ok" onclick="openStatusModal('${r.id}','Approved')">${tx('hrApprove')}</button><button class="abtn abtn-bad" onclick="openStatusModal('${r.id}','Rejected')">${tx('hrReject')}</button>${delBtn}`
           :delBtn||'<span style="font-size:11px;color:var(--txt3)">—</span>';
     return`<tr id="hr-row-${r.id}" style="transition:background .2s,opacity .2s${busy?';opacity:.55':''}"><td style="font-size:10px;color:var(--txt3);font-family:monospace">${r.id||'—'}</td><td><div style="font-weight:500">${r.empName||r.empId}</div><div style="font-size:11px;color:var(--txt3)">${r.empId}</div></td><td>${r.type}</td><td>${fmtDate(r.from)}</td><td style="text-align:center;font-weight:600">${r.days}</td><td><span class="badge b-${(r.status||'').toLowerCase()}">${r.status}</span></td><td><div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap">${actionCell}</div></td></tr>`;
   }).join('');
@@ -812,9 +826,8 @@ function hrRenderReqs(){
     }
   }
 }
-async function hrUpdateStatus(reqId,ns){
-  const reauth=await requireReauth('Enter your password to '+(ns==='Approved'?'approve':'reject')+' this request.');
-  if(!reauth)return;
+async function hrUpdateStatus(reqId,ns,silent){
+  silent=!!silent;
   const i=allReqs.findIndex(r=>r.id===reqId);
   if(i<0)return;
   const prevStatus=allReqs[i].status;
@@ -826,7 +839,7 @@ async function hrUpdateStatus(reqId,ns){
   // ── Background save ───────────────────────────────────────────────
   try{
     if(!isMock()){
-      const res=await apiPost('updateStatus',{requestId:reqId,status:ns,hrUser,token:hrToken||'',reauth});
+      const res=await apiPost('updateStatus',{requestId:reqId,status:ns,hrUser,silent,token:hrToken||''});
       if(!res||res.result!=='success'){
         // Revert on failure
         allReqs[i].status=prevStatus;
@@ -844,7 +857,7 @@ async function hrUpdateStatus(reqId,ns){
 // ── DELETE REQUEST ────────────────────────────────────────────────
 let _hrDelTarget=null,_hrDelReauth=null;
 function hrDeleteRequest(reqId,name,date){
-  _hrDelTarget={reqId,name,date};
+  _hrDelTarget={type:'request',reqId,name,date};
   document.getElementById('del-req-label').textContent=(name||reqId)+' · '+fmtDate(date);
   document.getElementById('hr-del-modal').style.display='flex';
   resetDelSlider();
@@ -854,6 +867,66 @@ function closeDelModal(){
   _hrDelTarget=null;_hrDelReauth=null;
   resetDelSlider();
 }
+// ── APPROVE/REJECT CONFIRM MODAL ────────────────────────────────────────
+let _hrStatusPending=null;
+function openStatusModal(reqId,ns){
+  _hrStatusPending={reqId,ns};
+  const isApprove=ns==='Approved';
+  document.getElementById('hr-sm-icon').textContent=isApprove?'✓':'✕';
+  document.getElementById('hr-sm-icon').style.background=isApprove?'rgba(34,197,94,.15)':'rgba(192,39,45,.12)';
+  document.getElementById('hr-sm-icon').style.color=isApprove?'#16a34a':'var(--red)';
+  document.getElementById('hr-sm-title').textContent=isApprove?'Confirm Approval':'Confirm Rejection';
+  const req=allReqs.find(r=>r.id===reqId);
+  document.getElementById('hr-sm-sub').textContent=req?(req.empName||req.empId)+' · '+(req.type||'')+'':'';
+  const btn=document.getElementById('hr-sm-confirm-btn');
+  btn.textContent=isApprove?'Approve':'Reject';
+  btn.style.background=isApprove?'#16a34a':'var(--red)';
+  // reset silent toggle
+  const chk=document.getElementById('hr-silent-chk');
+  if(chk)chk.checked=false;
+  hrSilentToggleUI();
+  document.getElementById('hr-status-modal').style.display='flex';
+}
+function closeStatusModal(){
+  document.getElementById('hr-status-modal').style.display='none';
+  _hrStatusPending=null;
+}
+function hrSilentToggleUI(){
+  const chk=document.getElementById('hr-silent-chk');
+  const on=chk&&chk.checked;
+  const toggle=document.getElementById('hr-sm-toggle');
+  const knob=document.getElementById('hr-sm-knob');
+  const label=document.getElementById('hr-sm-silent-label');
+  if(toggle)toggle.style.background=on?'#f59e0b':'var(--border)';
+  if(knob)knob.style.left=on?'21px':'3px';
+  if(label){label.style.borderColor=on?'#f59e0b':'var(--border)';label.style.background=on?'rgba(245,158,11,.08)':'var(--bg2)';}
+}
+function confirmHrStatus(){
+  if(!_hrStatusPending)return;
+  const {reqId,ns}=_hrStatusPending;
+  const silent=document.getElementById('hr-silent-chk')?.checked||false;
+  closeStatusModal();
+  hrUpdateStatus(reqId,ns,silent);
+}
+function hrDeleteNotice(empId,name,noticeType,date,time){
+  _hrDelTarget={type:'notice',empId,name,noticeType,date,time};
+  document.getElementById('del-req-label').textContent=(name||empId)+' · '+noticeType+' · '+date;
+  document.getElementById('hr-del-modal').style.display='flex';
+  resetDelSlider();
+}
+// ── FE time helpers for local notice stats recalc after delete ────
+const _WS_FE=8*60+30,_WE_FE=17*60+30;
+function _parseTmFE(t){
+  if(!t)return null;
+  // HH:MM anywhere in the string (handles "17:00", "17:00:00", and GAS Date strings)
+  const m=String(t).match(/(\d{1,2}):(\d{2})/);
+  if(m)return parseInt(m[1])*60+parseInt(m[2]);
+  // fallback: parse as Date object
+  const d=new Date(t);
+  return isNaN(d.getTime())?null:d.getHours()*60+d.getMinutes();
+}
+function _calcLateMinsFE(t){const m=_parseTmFE(t);return m?Math.max(0,m-_WS_FE):0;}
+function _calcEarlyMinsFE(t){const m=_parseTmFE(t);return m?Math.max(0,_WE_FE-m):0;}
 // Slide-to-confirm logic
 let _delSliding=false,_delStartX=0,_delCurX=0;
 function delSliderStart(e){
@@ -908,11 +981,31 @@ async function delSliderConfirm(){
   document.removeEventListener('touchmove',delSliderMove);
   document.removeEventListener('touchend',delSliderEnd);
   if(!_hrDelTarget)return;
-  const{reqId}=_hrDelTarget;
+  const target=_hrDelTarget;
   closeDelModal();
-  // Reauth
-  const reauth=await requireReauth('Enter your password to confirm deletion.');
-  if(!reauth){return;}
+  // ── Notice delete branch ─────────────────────────────────────────
+  if(target.type==='notice'){
+    const idx=noticesList.findIndex(n=>n.empId===target.empId&&n.type===target.noticeType&&n.date===target.date&&n.time===target.time);
+    if(idx>=0)noticesList.splice(idx,1);
+    const sm={};
+    noticesList.forEach(n=>{
+      if(!sm[n.empId])sm[n.empId]={name:n.name,late:0,early:0,lateMinutes:0,earlyMinutes:0};
+      if(n.type==='Late Arrival'){sm[n.empId].late++;sm[n.empId].lateMinutes+=_calcLateMinsFE(n.time);}
+      else{sm[n.empId].early++;sm[n.empId].earlyMinutes+=_calcEarlyMinsFE(n.time);}
+    });
+    noticeStats=Object.entries(sm).map(([id,v])=>({empId:id,name:v.name,late:v.late,early:v.early,total:v.late+v.early,lateMinutes:v.lateMinutes,earlyMinutes:v.earlyMinutes,totalMinutes:v.lateMinutes+v.earlyMinutes})).sort((a,b)=>b.total-a.total);
+    hrRenderAnalytics();
+    toast('Notice deleted','ok2');
+    try{
+      if(!isMock()){
+        const res=await apiPost('deleteNotice',{empId:target.empId,noticeType:target.noticeType,date:target.date,time:target.time,token:hrToken||''});
+        if(!res||res.result!=='success')toast(res&&res.error?res.error:'Delete failed on server','bad');
+      }
+    }catch(e){toast('Connection error','bad');}
+    return;
+  }
+  // ── Leave request delete ─────────────────────────────────────────
+  const{reqId}=target;
   const i=allReqs.findIndex(r=>r.id===reqId);
   if(i<0)return;
   const removed=allReqs.splice(i,1)[0];
@@ -921,7 +1014,7 @@ async function delSliderConfirm(){
   toast('Request deleted','ok2');
   try{
     if(!isMock()){
-      const res=await apiPost('deleteRequest',{requestId:reqId,token:hrToken||'',reauth});
+      const res=await apiPost('deleteRequest',{requestId:reqId,token:hrToken||''});
       if(!res||res.result!=='success'){
         allReqs.splice(i,0,removed);
         toast(res&&res.error?res.error:'Delete failed — restored.','bad');
@@ -1002,26 +1095,44 @@ function hrRenderAnalytics(){
   // ── Notice stats table ───────────────────────────────────────
   const tbody=document.getElementById('an-noticebody');
   const empty=document.getElementById('an-noticeempty');
-  if(!noticeStats.length){tbody.innerHTML='';empty.style.display='block';return;}
-  empty.style.display='none';
+  if(!noticeStats.length){tbody.innerHTML='';empty.style.display='block';}
+  else{empty.style.display='none';
   tbody.innerHTML=noticeStats.map(s=>{
-    var canConvert,extraCol;
-    if(_timedMode){
-      const totalMins=s.totalMinutes||0;
-      const days=Math.floor(totalMins/WORK_DAY_MINS);
-      canConvert=days>=1;
-      extraCol=`<td style="text-align:center;color:var(--txt2);font-size:11px">${_fmtMins(totalMins)}</td>`+
-        `<td style="text-align:center">${canConvert?`<button onclick="convertLatePage('${s.empId}','${s.name}',${JSON.stringify(s).replace(/'/g,"\\'")})" style="font-size:11px;padding:3px 10px;border:none;border-radius:6px;background:var(--red);color:#fff;cursor:pointer">Convert (${days}d)</button>`:'—'}</td>`;
-    }else{
-      canConvert=s.late>=_lateThreshold;
-      extraCol=`<td style="text-align:center">${canConvert?`<button onclick="convertLatePage('${s.empId}','${s.name}',${JSON.stringify(s).replace(/'/g,"\\'")})" style="font-size:11px;padding:3px 10px;border:none;border-radius:6px;background:var(--red);color:#fff;cursor:pointer">Convert</button>`:'—'}</td>`;
-    }
+    const totalMins=s.totalMinutes||0;
+    const rawDays=totalMins/WORK_DAY_MINS;
+    const rounded=Math.round(rawDays*10)/10;
+    const daysText=rounded===0?'—':rounded===1?'1 day':rounded+' days';
+    const daysColor=rounded>=1?'var(--red)':rounded>0?'var(--warn)':'var(--txt3)';
+    const convertCell=`<td style="text-align:center"><span style="font-weight:600;font-size:13px;color:${daysColor}">${daysText}</span></td>`;
+    const extraCol=(_timedMode?`<td style="text-align:center;color:var(--txt2);font-size:11px">${_fmtMins(totalMins)}</td>`:'')+convertCell;
     return`<tr><td style="font-weight:500">${s.name}</td>`+
     `<td style="text-align:center;color:var(--warn)">${s.late}</td>`+
     `<td style="text-align:center;color:var(--red)">${s.early}</td>`+
     `<td style="text-align:center;font-weight:600">${s.total}</td>`+
     extraCol+`</tr>`;
-  }).join('');
+  }).join('');}
+  // ── Individual notice records with delete ────────────────────────
+  const rBody=document.getElementById('an-notice-records-body');
+  const rEmpty=document.getElementById('an-notice-records-empty');
+  if(rBody){
+    if(!noticesList.length){rBody.innerHTML='';if(rEmpty)rEmpty.style.display='block';}
+    else{
+      if(rEmpty)rEmpty.style.display='none';
+      rBody.innerHTML=noticesList.map(n=>{
+        const isLate=n.type==='Late Arrival';
+        const sd=String(n.date||'').replace(/'/g,"\\'");
+        const st=String(n.time||'').replace(/'/g,"\\'");
+        const se=String(n.empId||'').replace(/'/g,"\\'");
+        const sn=String(n.name||'').replace(/'/g,"\\'");
+        const sy=String(n.type||'').replace(/'/g,"\\'");
+        return`<tr><td style="font-weight:500">${n.name||n.empId}</td>`+
+          `<td><span class="badge ${isLate?'b-pending':'b-rejected'}" style="font-size:10px">${n.type}</span></td>`+
+          `<td>${fmtDate(n.date)||n.date||'—'}</td><td>${fmtTimeVal(n.time)}</td>`+
+          `<td style="font-size:12px;color:var(--txt2)">${n.reason||'—'}</td>`+
+          `<td style="text-align:center"><button class="abtn abtn-del" style="font-size:11px;padding:4px 10px" onclick="hrDeleteNotice('${se}','${sn}','${sy}','${sd}','${st}')">Delete</button></td></tr>`;
+      }).join('');
+    }
+  }
 }
 
 let _lateThreshold=2;
@@ -1843,72 +1954,71 @@ async function hrManualLookup(){
   ['me-from','me-to','me-reason'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   document.getElementById('me-days').value='1';
   // reset notice form fields
-  document.getElementById('me-ndate').value=todayFmt();
   document.getElementById('me-ntime').value='';
-  document.getElementById('me-nreturn').value='';
+  const _mnret=document.getElementById('me-nreturn');if(_mnret)_mnret.value='';
   document.getElementById('me-nreason').value='';
-  meToggleReturn();
-  meShowSection('leave'); // default to leave tab
+  const _mndt=document.getElementById('me-ndate');if(_mndt)_mndt.value='';
 }
 function meCalcDays(){
   const f=document.getElementById('me-from').value,t=document.getElementById('me-to').value;
-  if(f&&t&&t>=f){
-    let n=0,c=new Date(f+'T00:00:00'),e=new Date(t+'T00:00:00');
-    while(c<=e){const d=c.getDay();if(d&&d!==6)n++;c.setDate(c.getDate()+1);}
-    document.getElementById('me-days').value=n||1;
-  }
+  if(!f||!t)return;
+  const d1=new Date(f),d2=new Date(t);if(isNaN(d1)||isNaN(d2)||d2<d1)return;
+  let days=0,cur=new Date(d1);
+  while(cur<=d2){const dow=cur.getDay();if(dow!==0&&dow!==6)days++;cur.setDate(cur.getDate()+1);}
+  const el=document.getElementById('me-days');if(el)el.value=days;
 }
 async function hrManualSubmit(){
-  if(!_manualStaff){toast('Lookup staff first','bad');return;}
+  if(!_manualStaff){toast('No staff selected','bad');return;}
   const ltype=document.getElementById('me-ltype').value;
-  const from=document.getElementById('me-from').value;
-  const to=document.getElementById('me-to').value||from;
+  if(!ltype){toast('Select a leave type','bad');return;}
+  const dateFrom=document.getElementById('me-from').value;
+  if(!dateFrom){toast('Select a start date','bad');return;}
+  const dateTo=document.getElementById('me-to').value||dateFrom;
   const days=parseFloat(document.getElementById('me-days').value)||1;
-  const reason=document.getElementById('me-reason').value.trim()||'Manual entry by HR';
-  if(!ltype||!from){toast('Fill all required fields','bad');return;}
+  const reason=document.getElementById('me-reason').value.trim();
   const btn=document.getElementById('me-submit-btn');
-  btn.disabled=true;btn.textContent='Saving…';
+  if(btn){btn.disabled=true;btn.textContent='Saving...';}
   try{
     const res=await apiHR('manualEntry',{
-      employeeId:_manualStaff.empId,name:_manualStaff.name,
-      gender:_manualStaff.gender||'',position:_manualStaff.position||'',
-      location:_manualStaff.location||'Phnom Penh',
-      leaveType:ltype,dateFrom:from,dateTo:to,workingDays:days,
-      submissionDate:todayFmt(),reason
+      employeeId:_manualStaff.empId,name:_manualStaff.name,gender:_manualStaff.gender||'',
+      position:_manualStaff.position,leaveType:ltype,dateFrom,dateTo,
+      workingDays:days,reason:reason||'Manual entry by HR',location:_manualStaff.location||'Phnom Penh'
     });
     if(res&&res.result==='success'){
-      toast('Saved — '+res.requestId,'ok2');
-      hrManualInit();hrLoadData();
-    }else{toast(res&&res.error||'Failed to save','bad');}
+      toast('Leave saved (silent)','ok2');
+      document.getElementById('me-ltype').value='';
+      ['me-from','me-to','me-reason'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+      document.getElementById('me-days').value='1';
+      hrLoadData();
+    }else{toast(res&&res.error?res.error:'Save failed','bad');}
   }catch(e){toast('Error: '+e,'bad');}
-  finally{btn.disabled=false;btn.textContent='Save Leave (Silent)';}
+  finally{if(btn){btn.disabled=false;btn.textContent='Save Leave (Silent)';}}
 }
 async function hrManualNoticeSubmit(){
-  if(!_manualStaff){toast('Lookup staff first','bad');return;}
-  const ntype=document.getElementById('me-ntype').value;
-  const ndate=document.getElementById('me-ndate').value;
-  const ntime=document.getElementById('me-ntime').value;
-  const nreturn=document.getElementById('me-nreturn').value;
-  const nreason=document.getElementById('me-nreason').value.trim();
-  if(!ndate||!ntime){toast('Date and time are required','bad');return;}
+  if(!_manualStaff){toast('No staff selected','bad');return;}
+  const noticeType=document.getElementById('me-ntype').value;
+  const date=document.getElementById('me-ndate').value;
+  if(!date){toast('Select a date','bad');return;}
+  const time=document.getElementById('me-ntime').value;
+  if(!time){toast('Enter a time','bad');return;}
+  const returnTime=document.getElementById('me-nreturn')?document.getElementById('me-nreturn').value:'';
+  const reason=document.getElementById('me-nreason').value.trim();
   const btn=document.getElementById('me-notice-btn');
-  btn.disabled=true;btn.textContent='Saving…';
+  if(btn){btn.disabled=true;btn.textContent='Saving...';}
   try{
     const res=await apiHR('manualNotice',{
       empId:_manualStaff.empId,name:_manualStaff.name,
-      noticeType:ntype,noticeDate:ndate,time:ntime,
-      returnTime:nreturn||'',reason:nreason||'Manual entry by HR'
+      noticeType,noticeDate:date,time,returnTime,reason:reason||'Manual entry by HR'
     });
     if(res&&res.result==='success'){
-      toast('Notice saved','ok2');
-      // reset notice fields but keep staff selected
+      toast('Notice saved (silent)','ok2');
       document.getElementById('me-ntime').value='';
-      document.getElementById('me-nreturn').value='';
+      if(document.getElementById('me-nreturn'))document.getElementById('me-nreturn').value='';
       document.getElementById('me-nreason').value='';
       hrLoadData();
-    }else{toast(res&&res.error||'Failed to save','bad');}
+    }else{toast(res&&res.error?res.error:'Save failed','bad');}
   }catch(e){toast('Error: '+e,'bad');}
-  finally{btn.disabled=false;btn.textContent='Save Notice (Silent)';}
+  finally{if(btn){btn.disabled=false;btn.textContent='Save Notice (Silent)';}}
 }
 
 async function wipeTestUser(){
@@ -1925,3 +2035,36 @@ async function wipeTestUser(){
   }catch(e){toast('Error: '+e,'bad');}
   finally{if(btn){btn.disabled=false;btn.textContent='Wipe All Test Data';}}
 }
+
+// ── HOME LEAVE BOARD ─────────────────────────────────────────────────
+async function loadHomeLeaveBoard(){
+  const el=document.getElementById('home-leave-list');
+  if(!el)return;
+  el.innerHTML='<div style="color:var(--txt3);font-size:13px;text-align:center;padding:20px">Loading…</div>';
+  try{
+    const res=await apiGet('getUpcomingLeaves');
+    if(!res||!res.leaves||!res.leaves.length){
+      el.innerHTML='<div style="color:var(--txt3);font-size:13px;text-align:center;padding:20px">No upcoming or current leaves.</div>';
+      return;
+    }
+    const today=new Date().toISOString().slice(0,10);
+    el.innerHTML=res.leaves.map(l=>{
+      const isPending=l.status==='Pending';
+      const isToday=l.from<=today&&l.to>=today;
+      const dot=isPending?'var(--warn)':'var(--ok)';
+      return`<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border);gap:12px;flex-wrap:wrap">`+
+        `<div style="display:flex;align-items:center;gap:10px">`+
+        `<div style="width:8px;height:8px;border-radius:50%;background:${dot};flex-shrink:0"></div>`+
+        `<div><div style="font-weight:500;font-size:13px;color:var(--txt)">${l.name}</div>`+
+        `<div style="font-size:11px;color:var(--txt3)">${l.type}</div></div></div>`+
+        `<div style="text-align:right;flex-shrink:0">`+
+        `<div style="font-size:12px;color:var(--txt2)">${fmtDate(l.from)}${l.to!==l.from?' – '+fmtDate(l.to):''}</div>`+
+        `<div style="display:flex;align-items:center;gap:5px;justify-content:flex-end;margin-top:3px">`+
+        (isToday?`<span style="font-size:10px;font-weight:700;color:var(--ok);background:rgba(34,197,94,.12);padding:1px 7px;border-radius:4px">TODAY</span>`:`<span style="font-size:10px;color:var(--txt3)">Upcoming</span>`)+
+        `<span class="badge ${isPending?'b-pending':'b-approved'}" style="font-size:10px;padding:2px 7px">${l.status}</span></div></div></div>`;
+    }).join('');
+  }catch(e){
+    el.innerHTML='<div style="color:var(--txt3);font-size:13px;text-align:center;padding:20px">Could not load data.</div>';
+  }
+}
+document.addEventListener('DOMContentLoaded',function(){loadHomeLeaveBoard();});
